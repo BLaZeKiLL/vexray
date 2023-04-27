@@ -1,7 +1,8 @@
-use crate::utils::math::{Color};
+use crate::utils::math::Color3;
 
 mod image;
 mod utils;
+mod renderer;
 
 pub fn run(file: &str, width: u32, height: u32) {
     println!("Welcome to VexRay");
@@ -18,7 +19,7 @@ pub fn run(file: &str, width: u32, height: u32) {
             let g = row as f64 / h;
             let b = 0.25;
 
-            let color = Color::new(r, g, b);
+            let color = Color3::new(r, g, b);
 
             buffer.push_str(&color.write_color());
         }

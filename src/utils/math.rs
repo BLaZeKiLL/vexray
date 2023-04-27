@@ -1,16 +1,21 @@
 use core::fmt;
 use std::ops;
 
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Vec3 {
     e: [f64; 3],
 }
 
-pub type Color = Vec3;
-pub type Point = Vec3;
+pub type Color3 = Vec3;
+pub type Point3 = Vec3;
 
 impl Vec3 {
     pub fn zero() -> Vec3 {
         Vec3 { e: [0.0, 0.0, 0.0] }
+    }
+
+    pub fn one() -> Vec3 {
+        Vec3 { e: [1.0, 1.0, 1.0] }
     }
 
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
@@ -29,12 +34,34 @@ impl Vec3 {
         self.e[2]
     }
 
+    pub fn magnitude(&self) -> f64 {
+        f64::sqrt(self.sqr_magnitude())
+    }
+
+    pub fn sqr_magnitude(&self) -> f64 {
+        self.x() * self.x() + self.y() * self.y() + self.z() * self.z()
+    }
+
+    pub fn normalized(self) -> Vec3 {
+        let m = self.magnitude();
+        
+        Vec3 { e: [self.x() / m, self.y() / m, self.z() / m] }
+    }
+
     pub fn write_color(&self) -> String {
         format!("{} {} {} \n", 
             (255.999 * self.x()).round() as i64, 
             (255.999 * self.y()).round() as i64,
             (255.999 * self.z()).round() as i64
         )
+    }
+}
+
+impl ops::Neg for Vec3 {
+    type Output = Vec3;
+
+    fn neg(self) -> Self::Output {
+        Vec3 { e: [-self.x(), -self.y(), -self.z()]}
     }
 }
 
@@ -46,11 +73,97 @@ impl ops::Add<Vec3> for Vec3 {
     }
 }
 
-impl ops::Neg for Vec3 {
+impl ops::Sub for Vec3 {
     type Output = Vec3;
 
-    fn neg(self) -> Self::Output {
-        Vec3 { e: [-self.x(), -self.y(), -self.z()]}
+    fn sub(self, rhs: Self) -> Self::Output {
+        Vec3 { e: [self.x() - rhs.x(), self.y() - rhs.y(), self.z() - rhs.z()] }
+    }
+}
+
+impl ops::Mul for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        Vec3 { e: [self.x() * rhs.x(), self.y() * rhs.y(), self.z() * rhs.z()] }
+    }
+}
+
+impl ops::Mul<f64> for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        Vec3 { e: [self.x() * rhs, self.y() * rhs, self.z() * rhs] }
+    }
+}
+
+impl ops::Div<f64> for Vec3 {
+    type Output = Vec3;
+
+    fn div(self, rhs: f64) -> Self::Output {
+        self * (1.0 / rhs)
+    }
+}
+
+impl ops::AddAssign for Vec3 {
+    fn add_assign(&mut self, rhs: Self) {
+        self.e[0] += rhs.x();
+        self.e[1] += rhs.y();
+        self.e[2] += rhs.z();
+    }
+}
+
+impl ops::MulAssign for Vec3 {
+    fn mul_assign(&mut self, rhs: Self) {
+        self.e[0] *= rhs.x();
+        self.e[1] *= rhs.y();
+        self.e[2] *= rhs.z();
+    }
+}
+
+impl ops::DivAssign for Vec3 {
+    fn div_assign(&mut self, rhs: Self) {
+        self.e[0] /= rhs.x();
+        self.e[1] /= rhs.y();
+        self.e[2] /= rhs.z();
+    }
+}
+
+impl ops::AddAssign<f64> for Vec3 {
+    fn add_assign(&mut self, rhs: f64) {
+        self.e[0] += rhs;
+        self.e[1] += rhs;
+        self.e[2] += rhs;
+    }
+}
+
+impl ops::MulAssign<f64> for Vec3 {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.e[0] *= rhs;
+        self.e[1] *= rhs;
+        self.e[2] *= rhs;
+    }
+}
+
+impl ops::DivAssign<f64> for Vec3 {
+    fn div_assign(&mut self, rhs: f64) {
+        self.e[0] /= rhs;
+        self.e[1] /= rhs;
+        self.e[2] /= rhs;
+    }
+}
+
+impl ops::Index<usize> for Vec3 {
+    type Output = f64;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.e[index]
+    }
+}
+
+impl ops::IndexMut<usize> for Vec3 {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        &mut self.e[index]
     }
 }
 
