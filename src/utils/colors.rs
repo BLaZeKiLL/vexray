@@ -1,4 +1,4 @@
-use super::math::Color3;
+use super::vec3::Color3;
 
 impl Color3 {
 	pub fn black() -> Color3 {

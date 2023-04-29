@@ -1,6 +1,6 @@
 use crate::{
     renderer::ray::Ray,
-    utils::math::{Point3, Vec3},
+    utils::vec3::{Point3, Vec3},
 };
 
 use super::hit::{HitResult, Hittable, Hit};
@@ -49,6 +49,6 @@ impl Hittable for Sphere {
 
 		let point = ray.at(root);
 
-        HitResult::Success(Hit::new(point, (point - self.center) / self.radius, root))
+        HitResult::Success(Hit::new(ray, point, (point - self.center) / self.radius, root))
     }
 }

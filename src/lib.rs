@@ -1,12 +1,21 @@
-use crate::{utils::math::Vec3, renderer::ray::{Ray, ray_color}};
+use crate::{utils::vec3::{Vec3, Point3}, renderer::ray::{Ray, ray_color}, world::World, shapes::sphere::Sphere};
 
 mod image;
 mod utils;
+mod world;
 mod shapes;
 mod renderer;
 
 pub fn run(file: &str, width: u32, height: u32) {
     println!("Welcome to VexRay");
+
+	let world = &mut World::new();
+
+	let sphere1 = Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5);
+	let sphere2 = Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0);
+
+	world.add(&sphere1);
+	world.add(&sphere2);
 
     // Image setup
     let w = width as f64;
@@ -41,7 +50,7 @@ pub fn run(file: &str, width: u32, height: u32) {
                 lower_left_corner + u * horizontal + v * vertical - origin
             );
 
-            let color = ray_color(&ray);
+            let color = ray.color(world);
 
             buffer.push_str(&color.write_color());
         }
