@@ -22,35 +22,27 @@ impl Ray {
         self.origin + (self.direction * t)
     }
 
-	pub fn color(&self, world: &World) -> Color3 {
-		let hit_result: HitResult = world.hit(self, 0.0, f64::MAX);
+	pub fn color(&self, world: &World, depth: i32) -> Color3 {
+		if depth <= 0 {
+			return Color3::black();
+		}
+
+		let hit_result: HitResult = world.hit(self, 0.001, f64::MAX);
 
 		match hit_result {
-			HitResult::Fail => { // Background
+			HitResult::Fail => { // Background, could be Hdri
 				let direction = self.direction().normalized();
 				let blend = 0.5 * (direction.y() + 1.0);
 				(1.0 - blend) * Color3::white() + blend * Color3::new(0.5, 0.7, 1.0)
 			},
-			HitResult::Success(hit) => { // Normal of what we hit
-				0.5 * (hit.normal() + Vec3::one())
+			HitResult::Success(hit) => { // Bounce
+				let target = hit.point() + hit.normal() + Point3::random_unit_vector(); // New Diffuse
+				// let target = hit.point() + Point3::random_in_hemisphere(&hit.normal()); // Old Diffuse
+
+				let ray = Ray::new(hit.point(), target - hit.point());
+
+				0.5 * ray.color(world, depth - 1)
 			},
 		}
-	}
-}
-
-pub fn ray_color(ray: &Ray) -> Color3 {
-	let sphere = Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5);
-
-	let hit_result = sphere.hit(ray, 0.0, f64::MAX);
-
-	match hit_result {
-		HitResult::Fail => { // Background
-			let direction = ray.direction().normalized();
-			let blend = 0.5 * (direction.y() + 1.0);
-			(1.0 - blend) * Color3::white() + blend * Color3::new(0.5, 0.7, 1.0)
-		},
-		HitResult::Success(hit) => { // Normal of what we hit
-			0.5 * (hit.normal() + Vec3::one())
-		},
 	}
 }

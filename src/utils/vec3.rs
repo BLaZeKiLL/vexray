@@ -1,6 +1,8 @@
 use core::fmt;
 use std::ops;
 
+use super::math::Math;
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Vec3 {
     e: [f64; 3],
@@ -61,11 +63,61 @@ impl Vec3 {
 		] }
 	}
 
-    pub fn write_color(&self) -> String {
+	pub fn random() -> Vec3 {
+		Vec3 { e: [
+			Math::random_double(),
+			Math::random_double(),
+			Math::random_double()
+		] }
+	}
+
+	pub fn random_in_range(min: f64, max: f64) -> Vec3 {
+		Vec3 { e: [
+			Math::random_double_in_range(min, max),
+			Math::random_double_in_range(min, max),
+			Math::random_double_in_range(min, max)
+		] }
+	}
+
+	/// This could potentially run forever :D
+	pub fn random_in_unit_sphere() -> Vec3 {
+		loop {
+			let point = Self::random_in_range(-1.0, 1.0);
+			if point.sqr_magnitude() >= 1.0 {
+				continue;
+			}
+			return point;
+		}
+	}
+
+	pub fn random_unit_vector() -> Vec3 {
+		Self::random_in_unit_sphere().normalized()
+	}
+
+	pub fn random_in_hemisphere(normal: &Vec3) -> Vec3 {
+		let in_unit_sphere = Self::random_in_unit_sphere();
+		if Self::dot(&in_unit_sphere, normal) > 0.0 {
+			in_unit_sphere
+		} else {
+			- in_unit_sphere
+		}
+	}
+
+    pub fn write_color(&self, samples: i32) -> String {
+		let mut r = self.x();
+		let mut g = self.y();
+		let mut b = self.z();
+
+		let scale = 1.0 / samples as f64;
+
+		r = f64::sqrt(scale * r);
+		g = f64::sqrt(scale * g);
+		b = f64::sqrt(scale * b);
+
         format!("{} {} {} \n", 
-            (255.999 * self.x()).floor() as i64, 
-            (255.999 * self.y()).floor() as i64,
-            (255.999 * self.z()).floor() as i64
+            (256.0 * r.clamp(0.0, 0.999)).floor() as i64, 
+            (256.0 * g.clamp(0.0, 0.999)).floor() as i64,
+            (256.0 * b.clamp(0.0, 0.999)).floor() as i64
         )
     }
 }
