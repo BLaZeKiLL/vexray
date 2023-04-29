@@ -1,4 +1,4 @@
-use crate::{utils::vec3::{Point3, Vec3, Color3}, shapes::{sphere::Sphere, hit::{Hittable, HitResult}}, world::World};
+use crate::{utils::vec3::{Point3, Vec3, Color3}, shapes::hit::{Hittable, HitResult}, world::World};
 
 pub struct Ray {
     origin: Point3,
