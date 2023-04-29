@@ -42,6 +42,7 @@ impl Vec3 {
         self.x() * self.x() + self.y() * self.y() + self.z() * self.z()
     }
 
+    /// Returns a unit vector
     pub fn normalized(self) -> Vec3 {
         let m = self.magnitude();
         
@@ -50,9 +51,9 @@ impl Vec3 {
 
     pub fn write_color(&self) -> String {
         format!("{} {} {} \n", 
-            (255.999 * self.x()).round() as i64, 
-            (255.999 * self.y()).round() as i64,
-            (255.999 * self.z()).round() as i64
+            (255.999 * self.x()).floor() as i64, 
+            (255.999 * self.y()).floor() as i64,
+            (255.999 * self.z()).floor() as i64
         )
     }
 }
@@ -94,6 +95,14 @@ impl ops::Mul<f64> for Vec3 {
 
     fn mul(self, rhs: f64) -> Self::Output {
         Vec3 { e: [self.x() * rhs, self.y() * rhs, self.z() * rhs] }
+    }
+}
+
+impl ops::Mul<Vec3> for f64 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        Vec3 { e: [self * rhs.x(), self * rhs.y(), self * rhs.z()] }
     }
 }
 
