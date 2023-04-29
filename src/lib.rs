@@ -1,7 +1,8 @@
-use crate::{utils::math::{Color3, Vec3}, renderer::ray::{Ray, ray_color}};
+use crate::{utils::math::Vec3, renderer::ray::{Ray, ray_color}};
 
 mod image;
 mod utils;
+mod shapes;
 mod renderer;
 
 pub fn run(file: &str, width: u32, height: u32) {

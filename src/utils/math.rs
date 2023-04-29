@@ -43,11 +43,23 @@ impl Vec3 {
     }
 
     /// Returns a unit vector
-    pub fn normalized(self) -> Vec3 {
+    pub fn normalized(&self) -> Vec3 {
         let m = self.magnitude();
         
         Vec3 { e: [self.x() / m, self.y() / m, self.z() / m] }
     }
+
+	pub fn dot(a: &Vec3, b: &Vec3) -> f64 {
+		a.x() * b.x() + a.y() * b.y() + a.z() * b.z()
+	}
+
+	pub fn cross(a: &Vec3, b: &Vec3) -> Vec3 {
+		Vec3 { e: [
+			a.y() * b.z() - a.z() * b.y(),
+			a.z() * b.x() - a.x() * b.z(),
+			a.x() * b.y() - a.y() * b.x()
+		] }
+	}
 
     pub fn write_color(&self) -> String {
         format!("{} {} {} \n", 
