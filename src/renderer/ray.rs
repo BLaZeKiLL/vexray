@@ -1,4 +1,4 @@
-use crate::{utils::math::{Point3, Vec3, Color3}, shapes::sphere::hit_sphere};
+use crate::{utils::math::{Point3, Vec3, Color3}, shapes::{sphere::Sphere, hit::{Hittable, HitResult}}};
 
 pub struct Ray {
     origin: Point3,
@@ -24,14 +24,18 @@ impl Ray {
 }
 
 pub fn ray_color(ray: &Ray) -> Color3 {
-	let t = hit_sphere(Point3::new(0.0, 0.0, -1.0), 0.5, ray);
+	let sphere = Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5);
 
-	if t > 0.0 {
-		let normal = (ray.at(t) - Point3::new(0.0, 0.0, -1.0)).normalized();
-		return 0.5 * (normal + Vec3::one());
+	let hit_result = sphere.hit(ray, 0.0, f64::MAX);
+
+	match hit_result {
+		HitResult::Fail => { // Background
+			let direction = ray.direction().normalized();
+			let blend = 0.5 * (direction.y() + 1.0);
+			(1.0 - blend) * Color3::white() + blend * Color3::new(0.5, 0.7, 1.0)
+		},
+		HitResult::Success(hit) => { // Normal of what we hit
+			0.5 * (hit.normal() + Vec3::one())
+		},
 	}
-
-    let direction = ray.direction().normalized();
-    let t = 0.5 * (direction.y() + 1.0);
-	(1.0 - t) * Color3::white() + t * Color3::new(0.5, 0.7, 1.0)
 }
