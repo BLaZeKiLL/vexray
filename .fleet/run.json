@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "name": "Run VexRay",
+            "type": "cargo",
+            "workingDir": "$PROJECT_DIR$",
+            "cargoArgs": ["run","--package","vexray","--bin","vexray"],
+        },
+    ]
+}

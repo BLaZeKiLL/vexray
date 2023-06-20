@@ -29,11 +29,29 @@ pub fn run(file: &str, width: u32, height: u32) {
 	let samples = 128;
 	let bounces = 64;
 
-    let mut buffer = String::new();
+    // let mut buffer = String::new();
 
-    for row in (0..height).rev() {
-        println!("Progress : {:.2}%", ((height - row) as f64 / h) * 100.0);
-        for col in 0..width {
+    // for row in (0..height).rev() {
+    //     // println!("Progress : {:.2}%", ((height - row) as f64 / h) * 100.0);
+    //     for col in 0..width {
+    //         let mut color = Color3::black(); 
+
+	// 		for _ in 0..samples {
+	// 			let u = ((col as f64) + Math::random_double()) / w;
+	// 			let v = ((row as f64) + Math::random_double()) / h;
+
+	// 			let ray = camera.get_ray(u, v);
+
+	// 			color += ray.color(world, bounces);
+	// 		}
+
+    //         buffer.push_str(&color.write_color(samples));
+    //     }
+    // }
+
+	let buffer: String = (0..height).rev()
+		.flat_map(|row| (0..width).map(move |col| (row, col)))
+		.map(|(row, col)| -> String {
             let mut color = Color3::black(); 
 
 			for _ in 0..samples {
@@ -45,9 +63,10 @@ pub fn run(file: &str, width: u32, height: u32) {
 				color += ray.color(world, bounces);
 			}
 
-            buffer.push_str(&color.write_color(samples));
-        }
-    }
+			color.write_color(samples)
+		})
+		.collect();
+		
 
     image::ppm_save_image(file, &buffer, width, height);
 }
